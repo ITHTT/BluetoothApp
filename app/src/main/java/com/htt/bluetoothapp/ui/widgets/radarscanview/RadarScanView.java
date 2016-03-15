@@ -36,6 +36,7 @@ public class RadarScanView extends View
     private Paint mPaintCircle;
     private Paint mPaintRadar;
     private Matrix matrix;
+    private boolean isRunning=false;
 
     private Handler handler = new Handler();
     private Runnable run = new Runnable()
@@ -44,7 +45,7 @@ public class RadarScanView extends View
         public void run()
         {
             start += 2;
-            matrix = new Matrix();
+            matrix.reset();
             matrix.postRotate(start, centerX, centerY);
             postInvalidate();
             handler.postDelayed(run, 10);
@@ -104,7 +105,7 @@ public class RadarScanView extends View
         defaultHeight = dip2px(context, DEFAULT_HEIGHT);
 
         matrix = new Matrix();
-        handler.post(run);
+        //handler.post(run);
     }
 
     private void initPaint()
@@ -183,6 +184,24 @@ public class RadarScanView extends View
     {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dipValue * scale + 0.5f);
+    }
+
+    public void startRadarScan(){
+        if(!isRunning) {
+            handler.post(run);
+            isRunning=true;
+        }
+    }
+
+    public void stopRadarScan(){
+        if(isRunning) {
+            handler.removeCallbacks(run);
+            isRunning=false;
+        }
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 
     private int px2dip(Context context, float pxValue)
